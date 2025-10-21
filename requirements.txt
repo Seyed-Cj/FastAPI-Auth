@@ -7,3 +7,5 @@ pymysql
 passlib[bcrypt]
 python-jose[cryptography]
 email-validator
+pydantic-settings
+python-multipart

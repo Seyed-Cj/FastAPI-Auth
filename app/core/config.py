@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from typing import Any
 
 class Settings(BaseSettings):
@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     @property
-    def SQL_DATABSE_URI(self) -> str:
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
         user = self.MYSQL_USER
         pw = self.MYSQL_PASSWORD
         host = self.MYSQL_HOST

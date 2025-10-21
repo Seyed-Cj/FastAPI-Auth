@@ -11,7 +11,7 @@ def get_user(db: Session, user_id: int) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 def create_user(db: Session, user_name: str, email: str, password: str) -> models.User:
-    user = models.User(email=email, user_name=user_name, hashed_password=hash_password(password))
+    user = models.User(email=email, user_name=user_name, password=hash_password(password))
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -21,7 +21,7 @@ def authenticate_user(db: Session, email: str, password: str) -> Optional[models
     user = get_user_by_email(db, email)
     if not user:
         return None
-    if not verify_password(password, user.hashed_password):
+    if not verify_password(password, user.password):
         return None
     return user
 

@@ -1,4 +1,3 @@
-# app/modules/auth/routes.py
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -6,8 +5,13 @@ from datetime import datetime
 from app.modules.auth import schemas, service
 from app.shared.deps import get_db_dep, get_current_user
 from app.core.db import get_db
+from pydantic import BaseModel
 
 router = APIRouter()
+
+class LoginPayload(BaseModel):
+    email: str
+    password: str
 
 @router.post("/register", response_model=schemas.UserOut, status_code=201)
 def register(payload: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -17,8 +21,8 @@ def register(payload: schemas.UserCreate, db: Session = Depends(get_db)):
     return user
 
 @router.post("/login", response_model=schemas.TokenResponse)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = service.authenticate_user(db, form_data.username, form_data.password)
+def login(payload: LoginPayload, db: Session = Depends(get_db)):
+    user = service.authenticate_user(db, payload.email, payload.password)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     access_token, access_expires, refresh_token, refresh_expires = service.create_tokens_for_user(db, user)
